@@ -26,3 +26,6 @@ go.work.sum
 
 # Ignore the air tmp folder
 tmp/
+
+# Ignore a dump folder for old code
+.old/
