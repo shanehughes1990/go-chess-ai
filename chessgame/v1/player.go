@@ -6,11 +6,10 @@ import "github.com/notnil/chess"
 type Player interface {
 	// Name returns the name of the player.
 	Name() string
-	// IsHuman returns true if the player is a human.
-	IsHuman() bool
-	// MakeMove
+	// MakeMove is the method that decides the move for the player.
 	//
-	// When the player IsHuman, the xy coordinates will be passed to the function,
-	// based off the mouse left click
-	MakeMove(game *GameState, xy ...int) (*chess.Move, error)
+	// Returning a move will cause the game engine to finalize the move.
+	//
+	// Returning nil will cause the game engine to wait for the player to make a move.
+	MakeMove(game *GameState) (*chess.Move, error)
 }

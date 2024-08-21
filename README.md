@@ -19,8 +19,7 @@ package main
 
 import (
 	"github.com/shanehughes1990/chess-ai/chessgame/v1"
-	"github.com/shanehughes1990/chess-ai/chessgame/v1/player/humanplayer"
-	"github.com/shanehughes1990/chess-ai/chessgame/v1/player/randomai"
+	"github.com/shanehughes1990/chess-ai/chessgame/v1/bots/randomai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,7 +29,7 @@ func init() {
 
 func main() {
 	manager := chessgame.NewGameManager(
-		chessgame.WithWhitePlayer(humanplayer.NewHumanPlayer("Player 1")),
+		chessgame.WithWhitePlayer(chessgame.NewHumanPlayer("Player 1")),
 		chessgame.WithBlackPlayer(randomai.NewRandomAI("Player 2")),
 	)
 
@@ -43,6 +42,21 @@ func main() {
 # Implimenting a Custom AI Player
 
 To impliment a custom AI player, you need to impliment the chessgame.Player interface. the following bot impliments a simple AI player that makes random moves.
+
+The Player interface is as follows
+```go
+// Player represents a player in the game.
+type Player interface {
+	// Name returns the name of the player.
+	Name() string
+	// MakeMove is the method that decides the move for the player.
+	//
+	// Returning a move will cause the game engine to finalize the move.
+	//
+	// Returning nil will cause the game engine to wait for the player to make a move.
+	MakeMove(game *GameState) (*chess.Move, error)
+}
+```
 
 ```go
 package randomai
@@ -67,19 +81,12 @@ func (p *randomAI) Name() string {
 	return p.name
 }
 
-// IsHuman returns true if the player is a human.
-func (p *randomAI) IsHuman() bool {
-	return false
-}
-
 // MakeMove gets all the valid moves from the chess engine and picks one at random
 //
 // Returning a *chess.Move will result in finalizing the move in the chess engine.
 //
-// Otherwise you can return nil to skip the move.
-//
-// The xy parameter are values provided when IsHuman is true. (Not intended to be used for an AI player, and will be empty)
-func (p *randomAI) MakeMove(game *chessgame.GameState, xy ...int) (*chess.Move, error) {
+// Otherwise you can return nil to skip the moveplayer, and will be empty)
+func (p *randomAI) MakeMove(game *chessgame.GameState) (*chess.Move, error) {
 	// Get all valid moves for the current player
 	validMoves := game.Game().ValidMoves()
 	if len(validMoves) == 0 {

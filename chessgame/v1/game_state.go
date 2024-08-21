@@ -50,37 +50,12 @@ func (gm *gameManager) newGameState() {
 	gm.gameState = gameState
 }
 
-// GetSquareSize returns the size of each square on the board.
-func (g *GameState) GetSquareSize() int {
-	return g.squareSize
-}
-
 // Game returns the current game.
 func (g *GameState) Game() *chess.Game {
 	return g.game
 }
 
-// UnsetMove unsets the selected move.
-func (g *GameState) UnsetMove() {
+// unsetMove unsets the selected move.
+func (g *GameState) unsetMove() {
 	g.selectedSquareX, g.selectedSquareY, g.availableMoves = -1, -1, nil
-}
-
-// GetSelectedSquare returns the selected square.
-func (g *GameState) GetSelectedSquare() (x int, y int) {
-	return g.selectedSquareX, g.selectedSquareY
-}
-
-// SetSelectedSquare sets the selected square.
-func (g *GameState) SetSelectedSquare(x, y int) {
-	g.selectedSquareX, g.selectedSquareY = x, y
-}
-
-// GetAvailableMoves returns the available moves.
-func (g *GameState) GetAvailableMoves() []*chess.Move {
-	return g.availableMoves
-}
-
-// SetAvailableMoves sets the available moves.
-func (g *GameState) SetAvailableMoves(moves []*chess.Move) {
-	g.availableMoves = moves
 }

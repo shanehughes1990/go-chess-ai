@@ -6,17 +6,16 @@ import (
 
 	"github.com/hajimehoshi/bitmapfont/v3"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/notnil/chess"
 	"github.com/sirupsen/logrus"
 )
 
-// gameEngine impliments the ebiten.Game interface.
+// gameEngine is used internally to impliment the ebiten.Game interface.
 type gameEngine struct{ *gameManager }
 
-// newGameEngine assignes an implimentation of the ebiten.Game interface to the gameManager.
+// newGameEngine assigns the gameEngine implimentation to the gameManager.
 func (gm *gameManager) newGameEngine() {
 	gm.gameEngine = &gameEngine{gm}
 }
@@ -25,24 +24,8 @@ func (gm *gameManager) newGameEngine() {
 func (g *gameEngine) Update() error {
 	logrus.Tracef("Current player: %s %s", g.gameState.currentPlayer.Name(), g.gameState.game.Position().Turn().String())
 	// run the MakeMove function for the current player
-	switch g.gameState.currentPlayer.IsHuman() {
-	case true:
-		// Make a move for the human player
-		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			x, y := ebiten.CursorPosition()
-
-			// adjust the x coordinate based on the padding
-			x -= g.gameState.padding
-
-			if err := g.makeMove(x, y); err != nil {
-				return err
-			}
-		}
-	case false:
-		// Make a move for the AI player
-		if err := g.makeMove(); err != nil {
-			return err
-		}
+	if err := g.makeMove(); err != nil {
+		return err
 	}
 
 	return nil
@@ -64,10 +47,9 @@ func (g *gameEngine) Draw(screen *ebiten.Image) {
 	// draw the debug menu
 	g.drawDebugMenu(screen)
 
-	if g.gameState.currentPlayer.IsHuman() {
-		g.drawHighlightSquare(screen)
-		g.drawAvailableMoves(screen)
-	}
+	// draw the selected square and it's available moves
+	g.drawHighlightSquare(screen)
+	g.drawAvailableMoves(screen)
 }
 
 // Layout impliments the ebiten.Game interface.
@@ -77,8 +59,8 @@ func (g *gameEngine) Layout(outsideWidth, outsideHeight int) (screenWidth, scree
 }
 
 // makeMove makes a move for the current player.
-func (g *gameEngine) makeMove(coordinates ...int) error {
-	move, err := g.gameState.currentPlayer.MakeMove(g.gameState, coordinates...)
+func (g *gameEngine) makeMove() error {
+	move, err := g.gameState.currentPlayer.MakeMove(g.gameState)
 	if err != nil {
 		return err
 	}
@@ -118,7 +100,7 @@ func (g *gameEngine) endTurn(move *chess.Move) error {
 	}
 
 	// unset the selected square
-	g.gameState.UnsetMove()
+	g.gameState.unsetMove()
 
 	return nil
 }

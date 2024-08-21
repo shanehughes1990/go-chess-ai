@@ -2,8 +2,7 @@ package main
 
 import (
 	"github.com/shanehughes1990/chess-ai/chessgame/v1"
-	"github.com/shanehughes1990/chess-ai/chessgame/v1/player/humanplayer"
-	"github.com/shanehughes1990/chess-ai/chessgame/v1/player/randomai"
+	"github.com/shanehughes1990/chess-ai/chessgame/v1/bots/randomai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,7 +12,7 @@ func init() {
 
 func main() {
 	manager := chessgame.NewGameManager(
-		chessgame.WithWhitePlayer(humanplayer.NewHumanPlayer("Player 1")),
+		chessgame.WithWhitePlayer(chessgame.NewHumanPlayer("Player 1")),
 		chessgame.WithBlackPlayer(randomai.NewRandomAI("Player 2")),
 	)
 

@@ -26,7 +26,7 @@ func (p *randomAI) IsHuman() bool {
 }
 
 // MakeMove makes a random move for the player.
-func (p *randomAI) MakeMove(game *chessgame.GameState, xy ...int) (*chess.Move, error) {
+func (p *randomAI) MakeMove(game *chessgame.GameState) (*chess.Move, error) {
 	// Get all valid moves for the current player
 	validMoves := game.Game().ValidMoves()
 	if len(validMoves) == 0 {
