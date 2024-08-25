@@ -23,10 +23,11 @@ type gameManager struct {
 	pieceImages                                                                       map[chess.Piece]*ebiten.Image
 	gameState                                                                         *GameState
 	gameEngine                                                                        ebiten.Game
+	tracer                                                                            GameTracer
 }
 
 // NewGameManager creates a new GameManager instance.
-func NewGameManager(opts ...GameManagerOption) GameManager {
+func NewGameManager(opts ...GameManagerOption) (GameManager, error) {
 	chessGame := &gameManager{
 		boardSize:                800,                                 // default board size
 		lightSquareColor:         color.RGBA{R: 255, G: 206, B: 158},  // default light square color, light brown
@@ -35,6 +36,7 @@ func NewGameManager(opts ...GameManagerOption) GameManager {
 		availableMoveSquareColor: color.RGBA{0, 255, 0, 128},          // default available move square color, green
 		pieceImages:              make(map[chess.Piece]*ebiten.Image), // map of the loaded piece images
 		gameState:                &GameState{},                        // initialize the game state
+		tracer:                   &NoOpTracer{},                       // initialize the game tracer
 	}
 
 	// apply the options
@@ -46,12 +48,21 @@ func NewGameManager(opts ...GameManagerOption) GameManager {
 	chessGame.newGameEngine()
 	chessGame.newGameState()
 
-	return chessGame
+	// load the piece images
+	if err := chessGame.loadPieceImages(); err != nil {
+		return nil, err
+	}
+
+	return chessGame, nil
 }
 
 // Start runs the game loop.
 func (gm *gameManager) Start() error {
-	// load the piece images here so we don't have to return an error on NewGameManager
+	return ebiten.RunGame(gm.gameEngine)
+}
+
+// loadPieceImages loads the piece images.
+func (gm *gameManager) loadPieceImages() error {
 	for piece, path := range pieceMap {
 		img, _, err := ebitenutil.NewImageFromFile(path)
 		if err != nil {
@@ -61,5 +72,5 @@ func (gm *gameManager) Start() error {
 		gm.pieceImages[piece] = img
 	}
 
-	return ebiten.RunGame(gm.gameEngine)
+	return nil
 }

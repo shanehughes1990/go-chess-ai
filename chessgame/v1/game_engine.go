@@ -76,7 +76,19 @@ func (g *gameEngine) makeMove() error {
 
 // endTurn ends the current players turn.
 func (g *gameEngine) endTurn(move *chess.Move) error {
+	// open the tracer
+	if err := g.tracer.Open(); err != nil {
+		return err
+	}
+	defer g.tracer.Close()
+
+	// move the piece
 	if err := g.gameState.game.Move(move); err != nil {
+		return err
+	}
+
+	// trace the current game state
+	if err := g.tracer.ReadInGameState(*g.gameState); err != nil {
 		return err
 	}
 

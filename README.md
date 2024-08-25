@@ -28,10 +28,13 @@ func init() {
 }
 
 func main() {
-	manager := chessgame.NewGameManager(
+	manager, err := chessgame.NewGameManager(
 		chessgame.WithWhitePlayer(chessgame.NewHumanPlayer("Player 1")),
 		chessgame.WithBlackPlayer(randomai.NewRandomAI("Player 2")),
 	)
+	if err != nil {
+		logrus.WithError(err).Panic("failed to create chess game manager")
+	}
 
 	if err := manager.Start(); err != nil {
 		logrus.WithError(err).Panic("failed to start chess game")

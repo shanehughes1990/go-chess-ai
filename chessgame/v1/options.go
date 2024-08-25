@@ -16,3 +16,10 @@ func WithBlackPlayer(player Player) GameManagerOption {
 		cg.gameState.blackPlayer = player
 	}
 }
+
+// WithTracer sets the tracer.
+func WithTracer(tracer GameTracer) GameManagerOption {
+	return func(cg *gameManager) {
+		cg.tracer = tracer
+	}
+}
